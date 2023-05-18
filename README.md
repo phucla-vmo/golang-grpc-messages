@@ -11,7 +11,7 @@ An example using gRPC in Golang
 
 ### Usage
   ```sh
-  make gen-calc
+  make gen-mesage
   make run-server
   make run-client
   ```
