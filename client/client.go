@@ -19,7 +19,6 @@ func main() {
 	//go CallCombineMessage(client)
 	//CallSplitMessageIntoWords(client)
 	CallMakeParagraphByWords(client)
-	//CallAverage(client)
 	//time.Sleep(3 * time.Second)
 }
 

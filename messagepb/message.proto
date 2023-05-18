@@ -30,17 +30,8 @@ message ParagraphResponse {
   string result = 1;
 }
 
-message AverageRequest{
-  float num = 1;
-}
-
-message AverageResponse {
-  float result = 1;
-}
-
 service MessageService {
   rpc CombineMessage(MessageRequest) returns (CombineMessageResponse);
   rpc SplitMessageIntoWords(SplitMessage) returns (stream ResponseWords);
   rpc MakeParagraphByWord(stream ParagraphRequest) returns (ParagraphResponse);
-  rpc Average(stream AverageRequest) returns (AverageResponse);
 }

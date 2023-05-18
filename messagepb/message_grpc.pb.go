@@ -22,7 +22,6 @@ const (
 	MessageService_CombineMessage_FullMethodName        = "/message.MessageService/CombineMessage"
 	MessageService_SplitMessageIntoWords_FullMethodName = "/message.MessageService/SplitMessageIntoWords"
 	MessageService_MakeParagraphByWord_FullMethodName   = "/message.MessageService/MakeParagraphByWord"
-	MessageService_Average_FullMethodName               = "/message.MessageService/Average"
 )
 
 // MessageServiceClient is the client API for MessageService service.
@@ -32,7 +31,6 @@ type MessageServiceClient interface {
 	CombineMessage(ctx context.Context, in *MessageRequest, opts ...grpc.CallOption) (*CombineMessageResponse, error)
 	SplitMessageIntoWords(ctx context.Context, in *SplitMessage, opts ...grpc.CallOption) (MessageService_SplitMessageIntoWordsClient, error)
 	MakeParagraphByWord(ctx context.Context, opts ...grpc.CallOption) (MessageService_MakeParagraphByWordClient, error)
-	Average(ctx context.Context, opts ...grpc.CallOption) (MessageService_AverageClient, error)
 }
 
 type messageServiceClient struct {
@@ -118,40 +116,6 @@ func (x *messageServiceMakeParagraphByWordClient) CloseAndRecv() (*ParagraphResp
 	return m, nil
 }
 
-func (c *messageServiceClient) Average(ctx context.Context, opts ...grpc.CallOption) (MessageService_AverageClient, error) {
-	stream, err := c.cc.NewStream(ctx, &MessageService_ServiceDesc.Streams[2], MessageService_Average_FullMethodName, opts...)
-	if err != nil {
-		return nil, err
-	}
-	x := &messageServiceAverageClient{stream}
-	return x, nil
-}
-
-type MessageService_AverageClient interface {
-	Send(*AverageRequest) error
-	CloseAndRecv() (*AverageResponse, error)
-	grpc.ClientStream
-}
-
-type messageServiceAverageClient struct {
-	grpc.ClientStream
-}
-
-func (x *messageServiceAverageClient) Send(m *AverageRequest) error {
-	return x.ClientStream.SendMsg(m)
-}
-
-func (x *messageServiceAverageClient) CloseAndRecv() (*AverageResponse, error) {
-	if err := x.ClientStream.CloseSend(); err != nil {
-		return nil, err
-	}
-	m := new(AverageResponse)
-	if err := x.ClientStream.RecvMsg(m); err != nil {
-		return nil, err
-	}
-	return m, nil
-}
-
 // MessageServiceServer is the server API for MessageService service.
 // All implementations must embed UnimplementedMessageServiceServer
 // for forward compatibility
@@ -159,7 +123,6 @@ type MessageServiceServer interface {
 	CombineMessage(context.Context, *MessageRequest) (*CombineMessageResponse, error)
 	SplitMessageIntoWords(*SplitMessage, MessageService_SplitMessageIntoWordsServer) error
 	MakeParagraphByWord(MessageService_MakeParagraphByWordServer) error
-	Average(MessageService_AverageServer) error
 	mustEmbedUnimplementedMessageServiceServer()
 }
 
@@ -175,9 +138,6 @@ func (UnimplementedMessageServiceServer) SplitMessageIntoWords(*SplitMessage, Me
 }
 func (UnimplementedMessageServiceServer) MakeParagraphByWord(MessageService_MakeParagraphByWordServer) error {
 	return status.Errorf(codes.Unimplemented, "method MakeParagraphByWord not implemented")
-}
-func (UnimplementedMessageServiceServer) Average(MessageService_AverageServer) error {
-	return status.Errorf(codes.Unimplemented, "method Average not implemented")
 }
 func (UnimplementedMessageServiceServer) mustEmbedUnimplementedMessageServiceServer() {}
 
@@ -257,32 +217,6 @@ func (x *messageServiceMakeParagraphByWordServer) Recv() (*ParagraphRequest, err
 	return m, nil
 }
 
-func _MessageService_Average_Handler(srv interface{}, stream grpc.ServerStream) error {
-	return srv.(MessageServiceServer).Average(&messageServiceAverageServer{stream})
-}
-
-type MessageService_AverageServer interface {
-	SendAndClose(*AverageResponse) error
-	Recv() (*AverageRequest, error)
-	grpc.ServerStream
-}
-
-type messageServiceAverageServer struct {
-	grpc.ServerStream
-}
-
-func (x *messageServiceAverageServer) SendAndClose(m *AverageResponse) error {
-	return x.ServerStream.SendMsg(m)
-}
-
-func (x *messageServiceAverageServer) Recv() (*AverageRequest, error) {
-	m := new(AverageRequest)
-	if err := x.ServerStream.RecvMsg(m); err != nil {
-		return nil, err
-	}
-	return m, nil
-}
-
 // MessageService_ServiceDesc is the grpc.ServiceDesc for MessageService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -304,11 +238,6 @@ var MessageService_ServiceDesc = grpc.ServiceDesc{
 		{
 			StreamName:    "MakeParagraphByWord",
 			Handler:       _MessageService_MakeParagraphByWord_Handler,
-			ClientStreams: true,
-		},
-		{
-			StreamName:    "Average",
-			Handler:       _MessageService_Average_Handler,
 			ClientStreams: true,
 		},
 	},
